@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "matric": "CSC/2024/001",
+    "course": "Computer Science",
+    "email": "john.doe@school.edu",
+    "status": "Present"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "matric": "CSC/2024/002",
+    "course": "Computer Science",
+    "email": "jane.smith@school.edu",
+    "status": "Present"
+  },
+  {
+    "id": 3,
+    "name": "Michael Johnson",
+    "matric": "CSC/2024/003",
+    "course": "Computer Science",
+    "email": "michael.j@school.edu",
+    "status": "Absent"
+  },
+  {
+    "id": 4,
+    "name": "Sarah Williams",
+    "matric": "CSC/2024/004",
+    "course": "Information Technology",
+    "email": "sarah.w@school.edu",
+    "status": "Late"
+  },
+  {
+    "id": 5,
+    "name": "David Brown",
+    "matric": "CSC/2024/005",
+    "course": "Computer Science",
+    "email": "david.b@school.edu",
+    "status": "Present"
+  },
+  {
+    "id": 6,
+    "name": "Emily Davis",
+    "matric": "CSC/2024/006",
+    "course": "Software Engineering",
+    "email": "emily.d@school.edu",
+    "status": "Present"
+  },
+  {
+    "id": 7,
+    "name": "James Wilson",
+    "matric": "CSC/2024/007",
+    "course": "Computer Science",
+    "email": "james.w@school.edu",
+    "status": "Absent"
+  },
+  {
+    "id": 8,
+    "name": "Olivia Martinez",
+    "matric": "CSC/2024/008",
+    "course": "Information Technology",
+    "email": "olivia.m@school.edu",
+    "status": "Present"
+  },
+  {
+    "id": 9,
+    "name": "Daniel Anderson",
+    "matric": "CSC/2024/009",
+    "course": "Software Engineering",
+    "email": "daniel.a@school.edu",
+    "status": "Late"
+  },
+  {
+    "id": 10,
+    "name": "Sophia Taylor",
+    "matric": "CSC/2024/010",
+    "course": "Computer Science",
+    "email": "sophia.t@school.edu",
+    "status": "Present"
+  }
+]
