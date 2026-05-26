@@ -121,7 +121,16 @@ export function AuthProvider({ children }) {
         email: email.trim(),
         password,
       })
-      if (error) return { success: false, message: error.message }
+      if (error) {
+        // Better error messages for common auth issues
+        if (error.message?.includes('Invalid login credentials')) {
+          return { success: false, message: 'Invalid email or password. Make sure you registered first.' }
+        }
+        if (error.message?.includes('Email not confirmed')) {
+          return { success: false, message: 'Please verify your email first. Check your inbox for a confirmation link.' }
+        }
+        return { success: false, message: error.message }
+      }
 
       const profile = await fetchProfile(data.user.id)
       const role = profile?.role || data.user.user_metadata?.role
