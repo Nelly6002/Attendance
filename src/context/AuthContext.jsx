@@ -92,8 +92,23 @@ export function AuthProvider({ children }) {
     }
 
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) return { success: false, message: error.message }
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      })
+      if (error) {
+        // Better error messages for common auth issues
+        if (error.message?.includes('Invalid login credentials')) {
+          return { success: false, message: 'Invalid email or password. Make sure you registered first.' }
+        }
+        if (error.message?.includes('Email not confirmed')) {
+          return { success: false, message: 'Please verify your email first. Check your inbox for a confirmation link.' }
+        }
+        if (error.message?.includes('too many requests') || error.status === 429) {
+          return { success: false, message: 'Too many login attempts. Please wait a few minutes and try again.' }
+        }
+        return { success: false, message: error.message }
+      }
       const role = data.user.user_metadata?.role
       const profile = await fetchProfile(data.user.id)
       const effectiveRole = profile?.role || role
@@ -261,14 +276,30 @@ export function AuthProvider({ children }) {
     }
 
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: { data: { full_name: formData.name, role: 'teacher' } },
-      })
-      if (error) return { success: false, message: error.message }
-      if (data.session?.user) await loadSupabaseUser(data.session.user)
-      return { success: true, message: 'Check your email to confirm your account.' }
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email.trim(),
+          password: formData.password,
+          options: { data: { full_name: formData.name.trim(), role: 'teacher' } },
+        })
+        if (error) {
+          // Better error messages for common signup issues
+          if (error.message?.includes('too many requests') || error.status === 429) {
+            return { success: false, message: 'Too many signup attempts. Please wait a few minutes and try again.' }
+          }
+          if (error.message?.includes('already registered') || error.message?.includes('already exists')) {
+            return { success: false, message: 'This email is already registered. Try signing in instead.' }
+          }
+          return { success: false, message: error.message }
+        }
+        if (data.session?.user) await loadSupabaseUser(data.session.user)
+        return { success: true, message: 'Check your email to confirm your account.' }
+      } catch (err) {
+        if (err.message?.includes('too many requests')) {
+          return { success: false, message: 'Too many signup attempts. Please wait a few minutes and try again.' }
+        }
+        return { success: false, message: err.message }
+      }
     }
 
     const newUser = { id: 'teacher-demo', name: formData.name, email: formData.email, role: 'teacher' }
