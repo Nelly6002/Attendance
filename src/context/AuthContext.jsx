@@ -211,6 +211,7 @@ export function AuthProvider({ children }) {
           email: email.trim(),
           password,
           options: {
+            emailRedirectTo: `${window.location.origin}/login/student`,
             data: {
               role: 'student',
               full_name: name.trim(),
@@ -280,7 +281,10 @@ export function AuthProvider({ children }) {
         const { data, error } = await supabase.auth.signUp({
           email: formData.email.trim(),
           password: formData.password,
-          options: { data: { full_name: formData.name.trim(), role: 'teacher' } },
+          options: {
+            emailRedirectTo: `${window.location.origin}/login/teacher`,
+            data: { full_name: formData.name.trim(), role: 'teacher' }
+          },
         })
         if (error) {
           // Better error messages for common signup issues

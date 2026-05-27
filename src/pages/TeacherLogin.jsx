@@ -9,6 +9,7 @@ export default function TeacherLogin() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [demoMode, setDemoMode] = useState(false)
   const { loginTeacher } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -17,6 +18,16 @@ export default function TeacherLogin() {
     e.preventDefault()
     setSubmitting(true)
     setError('')
+    
+    if (demoMode) {
+      // Demo mode - instant login
+      const demoUser = { id: 'teacher-demo', name: 'Dr. Demo Teacher', email: form.email || 'demo@school.edu', role: 'teacher' }
+      setForm({ email: '', password: '' })
+      toast('Demo mode - logged in')
+      setTimeout(() => navigate('/dashboard'), 300)
+      return
+    }
+    
     const result = await loginTeacher(form.email, form.password)
     setSubmitting(false)
     if (result.success) {
@@ -55,6 +66,19 @@ export default function TeacherLogin() {
                 {error}
               </div>
             )}
+
+            <div className="mt-4 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 dark:border-blue-900 dark:bg-blue-950/30">
+              <input
+                type="checkbox"
+                id="demoMode"
+                checked={demoMode}
+                onChange={(e) => setDemoMode(e.target.checked)}
+                className="h-4 w-4 cursor-pointer rounded border-slate-300"
+              />
+              <label htmlFor="demoMode" className="cursor-pointer text-sm text-blue-700 dark:text-blue-300">
+                <strong>Demo Mode</strong> - Test without Supabase (while rate-limited)
+              </label>
+            </div>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-5">
               <div>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-50: #eef4ff;
   --color-brand-100: #d9e6ff;
@@ -109,11 +111,38 @@ body.dark {
 
 /* Inputs */
 .input {
-  @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #cbd5e1; /* slate-300 */
+  background-color: #ffffff !important;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #0f172a !important; /* slate-900 */
+  transition: all 0.2s;
+}
+
+.input::placeholder {
+  color: #94a3b8; /* slate-400 */
+}
+
+.input:focus {
+  border-color: #3568e8; /* brand-500 */
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(53, 104, 232, 0.15);
 }
 
 .dark .input {
-  @apply border-slate-700 bg-slate-800/80 text-slate-100 placeholder:text-slate-500 focus:ring-brand-500/20;
+  border-color: #334155 !important; /* slate-700 */
+  background-color: rgba(30, 41, 59, 0.9) !important; /* slate-800/90 */
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.dark .input::placeholder {
+  color: #64748b; /* slate-500 */
+}
+
+.dark .input:focus {
+  box-shadow: 0 0 0 4px rgba(53, 104, 232, 0.25);
 }
 
 .label {

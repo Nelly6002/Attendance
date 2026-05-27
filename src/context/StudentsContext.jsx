@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import {
   fetchStudents,
   fetchAttendance,
@@ -44,6 +45,40 @@ export function StudentsProvider({ children }) {
     const onUpdate = () => loadData(true)
     window.addEventListener('attendance-updated', onUpdate)
     return () => window.removeEventListener('attendance-updated', onUpdate)
+  }, [loadData])
+
+  useEffect(() => {
+    let studentChannel = null
+    let attendanceChannel = null
+
+    if (isSupabaseConfigured && supabase) {
+      studentChannel = supabase
+        .channel('students_realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'students' },
+          () => {
+            loadData(true)
+          }
+        )
+        .subscribe()
+
+      attendanceChannel = supabase
+        .channel('attendance_records_realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'attendance_records' },
+          () => {
+            loadData(true)
+          }
+        )
+        .subscribe()
+    }
+
+    return () => {
+      if (studentChannel) supabase.removeChannel(studentChannel)
+      if (attendanceChannel) supabase.removeChannel(attendanceChannel)
+    }
   }, [loadData])
 
   const markAttendance = useCallback(

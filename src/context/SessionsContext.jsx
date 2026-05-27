@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import {
   fetchSessions,
   fetchSignIns,
@@ -37,7 +38,39 @@ export function SessionsProvider({ children }) {
   useEffect(() => {
     loadSessions()
     const interval = setInterval(() => loadSessions(true), 4000)
-    return () => clearInterval(interval)
+
+    let sessionChannel = null
+    let signInChannel = null
+
+    if (isSupabaseConfigured && supabase) {
+      sessionChannel = supabase
+        .channel('attendance_sessions_realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'attendance_sessions' },
+          () => {
+            loadSessions(true)
+          }
+        )
+        .subscribe()
+
+      signInChannel = supabase
+        .channel('session_sign_ins_realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'session_sign_ins' },
+          () => {
+            loadSessions(true)
+          }
+        )
+        .subscribe()
+    }
+
+    return () => {
+      clearInterval(interval)
+      if (sessionChannel) supabase.removeChannel(sessionChannel)
+      if (signInChannel) supabase.removeChannel(signInChannel)
+    }
   }, [loadSessions])
 
   useEffect(() => {

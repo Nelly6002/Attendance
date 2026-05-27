@@ -17,6 +17,7 @@ export default function StudentRegister() {
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState('')
   const { registerStudent } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -33,10 +34,45 @@ export default function StudentRegister() {
     setSubmitting(false)
     if (result.success) {
       toast(result.message || 'Registered successfully')
-      navigate(result.message?.includes('email') ? '/login/student' : '/student')
+      if (result.message?.toLowerCase().includes('email') || result.message?.toLowerCase().includes('confirm')) {
+        setRegisteredEmail(form.email)
+      } else {
+        navigate('/student')
+      }
     } else {
       setError(result.message)
     }
+  }
+
+  if (registeredEmail) {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md animate-fade-in surface-elevated p-8 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400">
+            <Mail className="h-8 w-8 animate-bounce text-brand-600 dark:text-brand-400" />
+          </div>
+          <h1 className="mt-6 text-2xl font-bold text-slate-900 dark:text-white">Verify your email</h1>
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+            We have sent a verification link to <strong className="text-slate-900 dark:text-white">{registeredEmail}</strong>.
+          </p>
+          <div className="mt-6 rounded-xl bg-blue-50/50 p-4 text-left border border-blue-100 dark:bg-blue-950/20 dark:border-blue-900/30">
+            <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300">Next Steps:</h3>
+            <ul className="mt-2 list-disc pl-4 text-xs text-blue-700/90 space-y-1.5 dark:text-blue-300/80">
+              <li>Open your email and locate the confirmation link.</li>
+              <li>Click the verification link to confirm your registration.</li>
+              <li>Once verified, click the button below to sign in.</li>
+            </ul>
+          </div>
+          <p className="mt-4 text-xs text-slate-400 dark:text-slate-500">
+            Didn't receive it? Check your <span className="font-semibold text-slate-500 dark:text-slate-400">Spam/Junk</span> folder.
+          </p>
+          <Link to="/login/student" className="btn-primary mt-8 w-full">
+            Proceed to Sign In
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
